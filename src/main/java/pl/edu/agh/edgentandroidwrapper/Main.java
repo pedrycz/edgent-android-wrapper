@@ -1,6 +1,9 @@
 package pl.edu.agh.edgentandroidwrapper;
 
+import android.hardware.Sensor;
 import pl.edu.agh.edgentandroidwrapper.Topology.FilteringTopology;
+import pl.edu.agh.edgentandroidwrapper.Topology.LastKTuplesTopology;
+import pl.edu.agh.edgentandroidwrapper.Topology.MappingTopology;
 import pl.edu.agh.edgentandroidwrapper.collector.SensorDataCollector;
 import pl.edu.agh.edgentandroidwrapper.consumer.MqttSensorDataConsumer;
 import pl.edu.agh.edgentandroidwrapper.consumer.SensorDataConsumer;
@@ -12,7 +15,7 @@ import pl.edu.agh.edgentandroidwrapper.task.EdgentTask;
 
 import static android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE;
 import static android.hardware.Sensor.TYPE_PRESSURE;
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Main {
     //sample usage of simple filtering topology
@@ -34,13 +37,14 @@ public class Main {
                                 .sensor(TYPE_AMBIENT_TEMPERATURE)
                                 .samplingRate(
                                         SamplingRate.builder()
-                                                .timeUnit(MICROSECONDS)
-                                                .value(1000000)
+                                                .timeUnit(SECONDS)
+                                                .value(2)
                                                 .build()
                                 )
                                 .simpleTopology(
                                         FilteringTopology.builder()
                                                 .name("This is topology name")
+                                                .tag("TEMPERATURE")
                                                 .predefinedFilter(
                                                         ValueInRangeFilter.builder()
                                                                 .rangeStart(60.0)
@@ -55,13 +59,14 @@ public class Main {
                         SensorDataCollector.builder()
                                 .sensor(TYPE_PRESSURE)
                                 .samplingRate(SamplingRate.builder()
-                                        .timeUnit(MICROSECONDS)
-                                        .value(1000000)
+                                        .timeUnit(SECONDS)
+                                        .value(5)
                                         .build()
                                 )
                                 .simpleTopology(
                                         FilteringTopology.builder()
                                                 .name("This is second topology name")
+                                                .tag("PRESSURE")
                                                 .predefinedFilter(
                                                         ValueHigherThanFilter.builder()
                                                                 .value(1010.0)
@@ -76,6 +81,40 @@ public class Main {
                                                 .build()
                                 )
                                 .consumer(secondConsumer)
+                                .build()
+                )
+                .sensorDataCollector(
+                        SensorDataCollector.builder()
+                                .sensor(Sensor.TYPE_RELATIVE_HUMIDITY)
+                                .samplingRate(SamplingRate.builder()
+                                        .timeUnit(SECONDS)
+                                        .value(10)
+                                        .build()
+                                )
+                                .simpleTopology(LastKTuplesTopology.builder()
+                                        .name("last-10-tuples")
+                                        .numberOfElementsToStore(10)
+                                        .tag("last-ten-tuples")
+                                        .build()
+                                )
+                                .consumer(secondConsumer)
+                                .build()
+                )
+                .sensorDataCollector(
+                        SensorDataCollector.builder()
+                                .sensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
+                                .samplingRate(SamplingRate.builder()
+                                        .timeUnit(SECONDS)
+                                        .value(30)
+                                        .build()
+                                )
+                                .simpleTopology(
+                                        MappingTopology.builder()
+                                                .name("Mapping topology")
+                                                .tag("absolute-values")
+                                                .mapper(tuple -> (double) Math.abs(tuple.values[0]))
+                                                .build()
+                                )
                                 .build()
                 )
                 .build();
