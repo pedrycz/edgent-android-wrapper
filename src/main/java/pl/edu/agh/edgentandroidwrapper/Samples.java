@@ -17,9 +17,9 @@ import static android.hardware.Sensor.TYPE_AMBIENT_TEMPERATURE;
 import static android.hardware.Sensor.TYPE_PRESSURE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class Main {
+public class Samples {
     //sample usage of simple filtering topology
-    public static void main(String[] args) {
+    public static void runSample() {
         SensorDataConsumer consumer = MqttSensorDataConsumer.builder()
                 .queueUrl("sample-url-of-the-queue")
                 .queueTopic("sample-topic")
