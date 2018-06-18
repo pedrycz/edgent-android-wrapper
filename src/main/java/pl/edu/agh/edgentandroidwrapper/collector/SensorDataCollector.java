@@ -10,16 +10,17 @@ import pl.edu.agh.edgentandroidwrapper.consumer.SensorDataConsumer;
 import pl.edu.agh.edgentandroidwrapper.samplingrate.SamplingRate;
 
 @Builder
-public class SensorDataCollector extends Activity {
+public class SensorDataCollector {
     private int sensor;
     private SensorDataConsumer consumer;
     private SamplingRate samplingRate;
     private SimpleTopology simpleTopology;
+    private Activity activity;
 
     public void startCollecting(SensorManager sensorManager) {
         Sensor sensorObject = sensorManager.getDefaultSensor(this.sensor);
         SensorSourceSetup source = new SensorSourceSetup(sensorManager, samplingRate.getValueInMicroseconds(), sensorObject);
-        simpleTopology.submitTopology(this, source, consumer);
+        simpleTopology.submitTopology(activity, source, consumer);
     }
 
 }
