@@ -7,31 +7,63 @@
     <groupId>pl.edu.agh</groupId>
     <artifactId>egdent-android-wrapper</artifactId>
     <version>0.1-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <lombok.version>1.18.0</lombok.version>
+        <edgent.version>1.2.0</edgent.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <android.version>4.1.1.4</android.version>
+    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.edgent.android</groupId>
             <artifactId>edgent-providers-direct</artifactId>
-            <version>1.2.0</version>
+            <version>${edgent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.edgent.android</groupId>
             <artifactId>edgent-android-topology</artifactId>
-            <version>1.2.0</version>
+            <version>${edgent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.edgent.android</groupId>
             <artifactId>edgent-android-hardware</artifactId>
-            <version>1.2.0</version>
+            <version>${edgent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>${android.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
