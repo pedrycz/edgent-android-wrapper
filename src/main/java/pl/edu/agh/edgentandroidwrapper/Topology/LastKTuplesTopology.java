@@ -9,13 +9,13 @@ import org.apache.edgent.topology.Topology;
 import static org.apache.edgent.function.Functions.unpartitioned;
 
 @Builder
-public class LastKTuplesTopology implements SimpleTopology {
+public class LastKTuplesTopology implements SimpleTopology<SensorEvent> {
 
     int numberOfElementsToStore;
     private String tag;
     private String name;
 
-    public TStream getStream(SensorSourceSetup source, Topology topology) {
+    public TStream<SensorEvent> getStream(SensorSourceSetup source, Topology topology) {
         TStream<SensorEvent> events = topology.events(source);
         events.last(numberOfElementsToStore, unpartitioned());
 

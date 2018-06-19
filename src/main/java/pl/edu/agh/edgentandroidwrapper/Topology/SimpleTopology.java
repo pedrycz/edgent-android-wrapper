@@ -7,18 +7,23 @@ import org.apache.edgent.providers.direct.DirectProvider;
 import org.apache.edgent.topology.TStream;
 import org.apache.edgent.topology.Topology;
 import pl.edu.agh.edgentandroidwrapper.consumer.SensorDataConsumer;
+import pl.edu.agh.edgentandroidwrapper.helper.StreamVisitor;
 
-public interface SimpleTopology {
+import java.util.Optional;
+
+public interface SimpleTopology<T> {
 
     DirectProvider directProvider = new DirectProvider();
 
     Topology getTopology();
 
-    TStream getStream(SensorSourceSetup source, Topology topology);
+    TStream<T> getStream(SensorSourceSetup source, Topology topology);
 
-    default void submitTopology(Activity activity, SensorSourceSetup source, SensorDataConsumer consumer) {
+    default void submitTopology(Activity activity, SensorSourceSetup source, SensorDataConsumer consumer, Optional<StreamVisitor<T>> visitor) {
         Topology topology = getTopology();
-        TStream dataStream = getStream(source, topology);
+        TStream<T> dataStream = getStream(source, topology);
+
+        visitor.ifPresent(vis -> vis.register(topology, dataStream));
 
         ActivityStreams.sinkOnUIThread(activity, dataStream, consumer.getConsumer());
 

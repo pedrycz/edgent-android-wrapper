@@ -1,15 +1,16 @@
 package pl.edu.agh.edgentandroidwrapper;
 
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import pl.edu.agh.edgentandroidwrapper.Topology.FilteringTopology;
 import pl.edu.agh.edgentandroidwrapper.Topology.LastKTuplesTopology;
 import pl.edu.agh.edgentandroidwrapper.Topology.MappingTopology;
 import pl.edu.agh.edgentandroidwrapper.collector.SensorDataCollector;
-import pl.edu.agh.edgentandroidwrapper.consumer.MqttSensorDataConsumer;
-import pl.edu.agh.edgentandroidwrapper.consumer.SensorDataConsumer;
+import pl.edu.agh.edgentandroidwrapper.helper.MqttVisitor;
 import pl.edu.agh.edgentandroidwrapper.filter.ValueHigherThanFilter;
 import pl.edu.agh.edgentandroidwrapper.filter.ValueInRangeFilter;
 import pl.edu.agh.edgentandroidwrapper.filter.ValueLowerThanFilter;
+import pl.edu.agh.edgentandroidwrapper.helper.StreamVisitor;
 import pl.edu.agh.edgentandroidwrapper.samplingrate.SamplingRate;
 import pl.edu.agh.edgentandroidwrapper.task.EdgentTask;
 
@@ -20,14 +21,22 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class Samples {
     //sample usage of simple filtering topology
     public static void runSample() {
-        SensorDataConsumer consumer = MqttSensorDataConsumer.builder()
-                .queueUrl("sample-url-of-the-queue")
-                .queueTopic("sample-topic")
+        StreamVisitor<SensorEvent> visitor = MqttVisitor.<SensorEvent>builder()
+                .queueUrl("tcp://iot.eclipse.org:1883")
+                .clientId("52033_client")
+                .topic("/52033_topic")
                 .build();
 
-        SensorDataConsumer secondConsumer = MqttSensorDataConsumer.builder()
-                .queueUrl("sample-url-of-the-queue")
-                .queueTopic("sample-topic-for-second-consumer")
+        StreamVisitor<SensorEvent> secondVisitor = MqttVisitor.<SensorEvent>builder()
+                .queueUrl("tcp://iot.eclipse.org:1883")
+                .clientId("52034_client")
+                .topic("/52034_topic")
+                .build();
+
+        StreamVisitor<SensorEvent> thirdVisitor = MqttVisitor.<SensorEvent>builder()
+                .queueUrl("tcp://iot.eclipse.org:1883")
+                .clientId("52035_client")
+                .topic("/52035_topic")
                 .build();
 
         EdgentTask task = EdgentTask.builder()
@@ -53,7 +62,7 @@ public class Samples {
                                                 )
                                                 .build()
                                 )
-                                .consumer(consumer)
+                                .streamVisitor(visitor)
                                 .build())
                 .sensorDataCollector(
                         SensorDataCollector.builder()
@@ -80,7 +89,7 @@ public class Samples {
                                                 .userFilter(tuple -> tuple.values[0] + tuple.values[1] == 23)
                                                 .build()
                                 )
-                                .consumer(secondConsumer)
+                                .streamVisitor(secondVisitor)
                                 .build()
                 )
                 .sensorDataCollector(
@@ -97,7 +106,7 @@ public class Samples {
                                         .tag("last-ten-tuples")
                                         .build()
                                 )
-                                .consumer(secondConsumer)
+                                .streamVisitor(thirdVisitor)
                                 .build()
                 )
                 .sensorDataCollector(

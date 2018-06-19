@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public class FilteringTopology implements SimpleTopology {
+public class FilteringTopology implements SimpleTopology<SensorEvent> {
 
     @Singular
     private List<Filter> predefinedFilters = new ArrayList<>();
@@ -22,7 +22,7 @@ public class FilteringTopology implements SimpleTopology {
     private String tag;
     private String name;
 
-    public TStream getStream(SensorSourceSetup source, Topology topology) {
+    public TStream<SensorEvent> getStream(SensorSourceSetup source, Topology topology) {
         TStream<SensorEvent> events = topology.events(source);
 
         for (Filter filter : predefinedFilters)

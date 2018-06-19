@@ -8,13 +8,13 @@ import org.apache.edgent.topology.TStream;
 import org.apache.edgent.topology.Topology;
 
 @Builder
-public class MappingTopology implements SimpleTopology {
+public class MappingTopology implements SimpleTopology<SensorEvent> {
 
     private Function<SensorEvent, Double> mapper;
     private String tag;
     private String name;
 
-    public TStream getStream(SensorSourceSetup source, Topology topology) {
+    public TStream<SensorEvent> getStream(SensorSourceSetup source, Topology topology) {
         TStream<SensorEvent> events = topology.events(source);
         events.map(mapper);
 
