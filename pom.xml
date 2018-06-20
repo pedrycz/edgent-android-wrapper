@@ -53,12 +53,6 @@
             <version>${edgent.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.edgent</groupId>
-            <artifactId>edgent-connectors-mqtt</artifactId>
-            <version>${edgent.version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>com.google.android</groupId>
