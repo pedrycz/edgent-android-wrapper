@@ -1,8 +1,10 @@
 package pl.edu.agh.edgentandroidwrapper.Topology;
 
 import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import lombok.Builder;
 import lombok.Singular;
+import org.apache.edgent.android.hardware.SensorStreams;
 import org.apache.edgent.android.hardware.runtime.SensorSourceSetup;
 import org.apache.edgent.function.Predicate;
 import org.apache.edgent.topology.TStream;
@@ -21,9 +23,11 @@ public class FilteringTopology implements SimpleTopology<SensorEvent> {
     private List<Predicate<SensorEvent>> userFilters = new ArrayList<>();
     private String tag;
     private String name;
+    private Topology topology;
 
-    public TStream<SensorEvent> getStream(SensorSourceSetup source, Topology topology) {
-        TStream<SensorEvent> events = topology.events(source);
+    public TStream<SensorEvent> getStream(SensorManager sensorManager, int sensor) {
+        topology = directProvider.newTopology(name);
+        TStream<SensorEvent> events = SensorStreams.sensors(topology, sensorManager, sensor);
 
         for (Filter filter : predefinedFilters)
             events = events.filter(filter.getFilter());
@@ -36,6 +40,6 @@ public class FilteringTopology implements SimpleTopology<SensorEvent> {
 
     @Override
     public Topology getTopology() {
-        return directProvider.newTopology(name);
+        return topology;
     }
 }

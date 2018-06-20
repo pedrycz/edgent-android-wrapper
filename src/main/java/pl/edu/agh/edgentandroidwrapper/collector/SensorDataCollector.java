@@ -24,13 +24,8 @@ public class SensorDataCollector {
     private StreamVisitor<SensorEvent> streamVisitor;
     private Activity activity;
 
-    private DirectProvider directProvider = new DirectProvider();
-
     public void startCollecting(SensorManager sensorManager) {
-        Sensor sensorObject = sensorManager.getDefaultSensor(this.sensor);
-        SensorSourceSetup source = new SensorSourceSetup(sensorManager, samplingRate.getValueInMicroseconds(), sensorObject);
-
-        simpleTopology.submitTopology(activity, source, consumer, Optional.ofNullable(streamVisitor));
+        simpleTopology.submitTopology(activity, sensorManager, this.sensor, consumer, Optional.ofNullable(streamVisitor));
     }
 
 }

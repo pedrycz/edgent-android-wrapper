@@ -1,6 +1,7 @@
 package pl.edu.agh.edgentandroidwrapper.Topology;
 
 import android.app.Activity;
+import android.hardware.SensorManager;
 import org.apache.edgent.android.hardware.runtime.SensorSourceSetup;
 import org.apache.edgent.android.topology.ActivityStreams;
 import org.apache.edgent.providers.direct.DirectProvider;
@@ -17,11 +18,11 @@ public interface SimpleTopology<T> {
 
     Topology getTopology();
 
-    TStream<T> getStream(SensorSourceSetup source, Topology topology);
+    TStream<T> getStream(SensorManager sensorManager, int sensor);
 
-    default void submitTopology(Activity activity, SensorSourceSetup source, SensorDataConsumer consumer, Optional<StreamVisitor<T>> visitor) {
+    default void submitTopology(Activity activity, SensorManager sensorManager, int sensor, SensorDataConsumer consumer, Optional<StreamVisitor<T>> visitor) {
         Topology topology = getTopology();
-        TStream<T> dataStream = getStream(source, topology);
+        TStream<T> dataStream = getStream(sensorManager, sensor);
 
         visitor.ifPresent(vis -> vis.register(topology, dataStream));
 
